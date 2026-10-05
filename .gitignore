@@ -2,4 +2,5 @@
 .public_key
 .pub
 .ssh
-.vagrant/
+.vagrant/__pycache__/
+*.pyc
