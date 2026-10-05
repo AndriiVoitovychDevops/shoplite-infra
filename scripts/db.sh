@@ -14,6 +14,10 @@ if ! rpm -q mariadb-server >/dev/null 2>&1; then
     dnf install -y mariadb-server
 fi
 
+log "Allowing MariaDB from ${API_IP} only"
+firewall-cmd --permanent --add-rich-rule="rule family=ipv4 source address=${API_IP}/32 port port=3306 protocol=tcp accept"
+firewall-cmd --reload
+
 systemctl enable --now mariadb
 
 # 3. Мережа: TODO
@@ -21,11 +25,11 @@ systemctl enable --now mariadb
 #    - Firewalld: відкрити 3306 ЛИШЕ для API_IP (rich rule), а не для всіх.
 #      Як зробити ідемпотентно? Подивись firewall-cmd --query-rich-rule
 
-# 4. База і користувач: TODO
-#    mysql -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` ..."
-#    CREATE USER IF NOT EXISTS '${DB_USER}'@'${API_IP}' ...
-#    GRANT SELECT ON ...
-#    ❓ IF NOT EXISTS не змінить пароль, якщо користувач уже є.
-#       Що буде, коли ти зміниш DB_PASSWORD у .env? (ключове слово: ALTER USER)
+log "Creating database and user"
+mysql <<SQL
+CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS '${DB_USER}'@'${API_IP}' IDENTIFIED BY '${DB_PASSWORD}';
+GRANT SELECT ON \`${DB_NAME}\`.* TO '${DB_USER}'@'${API_IP}';
+SQL
 
 log "Done"
