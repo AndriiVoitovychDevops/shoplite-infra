@@ -1,3 +1,5 @@
+.env
 .public_key
 .pub
 .ssh
+.vagrant/
