@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Run on DevOps1 from repo root: copy app to api VM and provision it.
 set -euo pipefail
 
 API="vagrant@192.168.56.31"

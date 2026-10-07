@@ -20,11 +20,6 @@ firewall-cmd --reload
 
 systemctl enable --now mariadb
 
-# 3. Мережа: TODO
-#    - На якій адресі слухає MariaDB зараз? Не вгадуй, перевір: ss -tlnp | grep 3306
-#    - Firewalld: відкрити 3306 ЛИШЕ для API_IP (rich rule), а не для всіх.
-#      Як зробити ідемпотентно? Подивись firewall-cmd --query-rich-rule
-
 log "Creating database and user"
 mysql <<SQL
 CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
