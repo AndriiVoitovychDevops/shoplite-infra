@@ -10,7 +10,7 @@ set -euo pipefail
 
 log() { echo "[api] $*"; }
 
-apt-get update && apt-get install -y python3-venv mariadb-client
+apt-get update && apt-get install -y python3-venv mariadb-client nginx
 
 id catalog >/dev/null 2>&1 || useradd --system --no-create-home --shell /usr/sbin/nologin catalog
 
@@ -26,6 +26,24 @@ DB_PASSWORD=${DB_PASSWORD}
 EOF
 chown root:catalog /etc/catalog-api/env
 chmod 640 /etc/catalog-api/env
+
+cat > /etc/nginx/sites-available/catalog-api <<'EOF'
+server {
+    listen 80;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+EOF
+
+ln -sf /etc/nginx/sites-available/catalog-api /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+nginx -t
+systemctl reload nginx
 
 install -m 644 /tmp/catalog-api.service /etc/systemd/system/
 

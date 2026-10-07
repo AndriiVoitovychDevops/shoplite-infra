@@ -8,7 +8,7 @@ User=catalog
 Group=catalog
 WorkingDirectory=/opt/catalog-api
 EnvironmentFile=/etc/catalog-api/env
-ExecStart=/opt/catalog-api/venv/bin/gunicorn --no-control-socket --bind 0.0.0.0:8000 app:app
+ExecStart=/opt/catalog-api/venv/bin/gunicorn --no-control-socket --bind 127.0.0.1:8000 app:app
 Restart=on-failure
 RestartSec=3
 
