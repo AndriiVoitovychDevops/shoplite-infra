@@ -7,7 +7,7 @@ KEY="$HOME/.ssh/shoplite"
 
 set -a; source .env; set +a
 
-# TODO: твій рядок scp, тільки замість ключа й адреси $KEY і $API
+scp -i "$KEY" app/catalog-api/app.py app/catalog-api/requirements.txt systemd/catalog-api.service "$API":/tmp/
 
 ssh -i "$KEY" "$API" \
   "sudo DB_HOST='$DB_HOST' DB_NAME='$DB_NAME' DB_USER='$DB_USER' DB_PASSWORD='$DB_PASSWORD' bash -s" < scripts/api.sh
